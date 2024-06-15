@@ -33,7 +33,10 @@ bot.on('message', async (msg) => {
 
         try {
             // Send the GIF
-            const docResponse = await bot.sendDocument(chatId, gifUrl);
+            const docResponse = await bot.sendDocument(chatId, gifUrl).catch((error) => {
+                console.error('Error sending GIF:', error.toString());
+                return null;
+            });
             console.log('Sent GIF:', JSON.stringify(docResponse, null, 2));
 
             // Send the message with the PLAY button
@@ -44,14 +47,20 @@ bot.on('message', async (msg) => {
                         web_app: { url: websiteUrl }
                     }]]
                 }
+            }).catch((error) => {
+                console.error('Error sending message:', error.toString());
+                return null;
             });
             console.log('Sent message:', JSON.stringify(messageResponse, null, 2));
 
             // Pin the text message
-            const pinResponse = await bot.pinChatMessage(chatId, messageResponse.message_id, { disable_notification: true });
+            const pinResponse = await bot.pinChatMessage(chatId, messageResponse.message_id, { disable_notification: true }).catch((error) => {
+                console.error('Error pinning message:', error.toString());
+                return null;
+            });
             console.log('Pinned message:', JSON.stringify(pinResponse, null, 2));
         } catch (error) {
-            console.error('Error in /start command:', error);
+            console.error('Error in /start command:', error.toString());
         }
     }
 });
