@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Matching</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@ton-connect/sdk"></script>
+    <script src="src/game/game.js" defer></script>
+</head>
+
+<body>
+    <div id="wallet-connect">
+        <button id="connectButton">Connect Wallet</button>
+        <p id="walletInfo">Not connected</p>
+    </div>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+    </div>
+
+    <script src="connect.js"></script>
+</body>
+
+</html>
