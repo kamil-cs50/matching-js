@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const TelegramBot = require('node-telegram-bot-api');
@@ -23,13 +22,15 @@ app.post('/', (req, res) => {
     res.sendStatus(200);
 });
 
-// Listen for messages from users 
+// Listen for messages from users
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
 
     if (msg.text === '/start') {
         // Send the GIF
-        await bot.sendDocument(chatId, gifUrl);
+        await bot.sendDocument(chatId, gifUrl).catch((error) => {
+            console.error('Error sending GIF:', error.response.body);
+        });
 
         // Send the message with the PLAY button
         const message = await bot.sendMessage(chatId, "Play the game to earn points! 🔥", {
@@ -39,10 +40,14 @@ bot.on('message', async (msg) => {
                     web_app: { url: websiteUrl }
                 }]]
             }
+        }).catch((error) => {
+            console.error('Error sending message:', error.response.body);
         });
 
         // Pin the text message
-        await bot.pinChatMessage(chatId, message.message_id, { disable_notification: true });
+        await bot.pinChatMessage(chatId, message.message_id, { disable_notification: true }).catch((error) => {
+            console.error('Error pinning message:', error.response.body);
+        });
     }
 });
 
