@@ -10,11 +10,3 @@ node_modules/
 
 # Optional directories created by macOS
 .DS_Store
-
-# Optional npm log
-
-.env.local
-
-.vercel/
-
-vercel.json
