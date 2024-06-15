@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const TelegramBot = require('node-telegram-bot-api');
@@ -22,10 +23,9 @@ app.post('/', (req, res) => {
     res.sendStatus(200);
 });
 
-// Listen for messages from users
+// Listen for messages from users 
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
-
 
     if (msg.text === '/start') {
         // Send the GIF
