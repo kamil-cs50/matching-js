@@ -1,4 +1,3 @@
-const { VercelRequest, VercelResponse } = require('@vercel/node');
 const express = require('express');
 const bodyParser = require('body-parser');
 const TelegramBot = require('node-telegram-bot-api');
@@ -18,19 +17,18 @@ const bot = new TelegramBot(token);
 app.use(bodyParser.json());
 
 // Define the endpoint that is used by Telegram webhook
-app.post(/, (req, res) => {
-bot.processUpdate(req.body);
-res.sendStatus(200);
+app.post('/', (req, res) => {
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
 });
 
-// Listen for messages from users
+// Listen for messages from users 
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
 
     if (msg.text === '/start') {
         // Send the GIF
         await bot.sendDocument(chatId, gifUrl);
-
 
         // Send the message with the PLAY button
         const message = await bot.sendMessage(chatId, "Play the game to earn points! 🔥", {
@@ -43,12 +41,8 @@ bot.on('message', async (msg) => {
         });
 
         // Pin the text message
-        bot.pinChatMessage(chatId, message.message_id, { disable_notification: true });
+        await bot.pinChatMessage(chatId, message.message_id, { disable_notification: true });
     }
 });
 
-module.exports = (req, res) => {
-    app(req, res, () => {
-        res.status(404).end();
-    });
-};
+module.exports = app;
