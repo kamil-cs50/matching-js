@@ -11,7 +11,7 @@ const gifUrl = process.env.GIF_URL;
 const websiteUrl = process.env.WEBSITE_URL;
 
 // Create a bot that uses 'webhook' to fetch new updates
-const bot = new TelegramBot(token, { polling: false });
+const bot = new TelegramBot(token);
 
 // Parse the updates to JSON
 app.use(bodyParser.json());
@@ -36,53 +36,65 @@ bot.on('message', async (msg) => {
 
         try {
             // Send a simple text message first
-            const messageResponse = await bot.sendMessage(chatId, "Welcome! Let's start the game. 🎮");
-            console.log('Sent simple welcome message:', JSON.stringify(messageResponse, null, 2));
+            await bot.sendMessage(chatId, "Welcome! Let's start the game. 🎮")
+                .then(message => {
+                    console.log('Sent simple welcome message:', JSON.stringify(message, null, 2));
+                })
+                .catch(error => {
+                    console.error('Failed to send welcome message:', error.toString());
+                    throw error;
+                });
 
             await delay(500);  // Delay to help with rate limiting
 
             // Send the GIF
-            const docResponse = await bot.sendDocument(chatId, gifUrl).catch(error => {
-                console.error('Error sending GIF:', error.toString());
-                return null;  // Return null to avoid breaking the flow
-            });
-            if (docResponse) {
-                console.log('Sent GIF:', JSON.stringify(docResponse, null, 2));
-            }
+            await bot.sendDocument(chatId, gifUrl)
+                .then(docResponse => {
+                    console.log('Sent GIF:', JSON.stringify(docResponse, null, 2));
+                })
+                .catch(error => {
+                    console.error('Failed to send GIF:', error.toString());
+                    throw error;
+                });
 
             await delay(500);  // Delay to help with rate limiting
 
             // Send the message with the PLAY button
-            const playMessageResponse = await bot.sendMessage(chatId, "Play the game to earn points! 🔥", {
+            await bot.sendMessage(chatId, "Play the game to earn points! 🔥", {
                 reply_markup: {
                     inline_keyboard: [[{
                         text: "PLAY 🎮",
                         web_app: { url: websiteUrl }
                     }]]
                 }
-            }).catch(error => {
-                console.error('Error sending PLAY message:', error.toString());
-                return null;
-            });
-            if (playMessageResponse) {
-                console.log('Sent message with keyboard:', JSON.stringify(playMessageResponse, null, 2));
-            }
+            })
+                .then(playMessageResponse => {
+                    console.log('Sent message with keyboard:', JSON.stringify(playMessageResponse, null, 2));
 
-            await delay(500);  // Delay to help with rate limiting
-
-            // Pin the text message if possible
-            if (playMessageResponse) {
-                const pinResponse = await bot.pinChatMessage(chatId, playMessageResponse.message_id, { disable_notification: true }).catch(error => {
-                    console.error('Error pinning message:', error.toString());
-                    return null;
+                    return playMessageResponse.message_id; // Return this for pinning
+                })
+                .catch(error => {
+                    console.error('Failed to send message with keyboard:', error.toString());
+                    throw error;
+                })
+                .then(async (messageId) => {
+                    // Pin the text message if possible
+                    await delay(500);  // Delay to help with rate limiting
+                    await bot.pinChatMessage(chatId, messageId, { disable_notification: true })
+                        .then(pinResponse => {
+                            console.log('Pinned message:', JSON.stringify(pinResponse, null, 2));
+                        })
+                        .catch(error => {
+                            console.error('Failed to pin message:', error.toString());
+                            throw error;
+                        });
+                })
+                .catch(error => {
+                    console.error('Error in chaining promises:', error.toString());
                 });
-                if (pinResponse) {
-                    console.log('Pinned message:', JSON.stringify(pinResponse, null, 2));
-                }
-            }
 
         } catch (error) {
-            console.error('Error in /start command:', error.toString());
+            console.error('Error in /start command processing:', error.toString());
         }
     }
 });
