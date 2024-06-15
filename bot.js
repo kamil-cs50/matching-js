@@ -23,13 +23,16 @@ app.post('/', (req, res) => {
     res.sendStatus(200);
 });
 
+// Function to add a delay
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 // Listen for messages from users 
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
 
     if (msg.text === '/start') {
         // Send the GIF
-        await bot.sendDocument(chatId, gifUrl);
+        // await bot.sendDocument(chatId, gifUrl);
 
         // Send the message with the PLAY button
         const message = await bot.sendMessage(chatId, "Play the game to earn points! 🔥", {
@@ -40,6 +43,9 @@ bot.on('message', async (msg) => {
                 }]]
             }
         });
+
+        // Add an 80ms delay
+        await delay(80);
 
         // Pin the text message
         await bot.pinChatMessage(chatId, message.message_id, { disable_notification: true });
