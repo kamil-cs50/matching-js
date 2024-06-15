@@ -7,7 +7,6 @@ const app = express();
 
 // This token you have in your environment variables
 const token = process.env.TELEGRAM_BOT_TOKEN;
-const gifUrl = process.env.GIF_URL;
 const websiteUrl = process.env.WEBSITE_URL;
 
 // Create a bot that uses 'webhook' to fetch new updates
@@ -47,18 +46,6 @@ bot.on('message', async (msg) => {
 
             await delay(500);  // Delay to help with rate limiting
 
-            // Send the GIF
-            await bot.sendDocument(chatId, gifUrl)
-                .then(docResponse => {
-                    console.log('Sent GIF:', JSON.stringify(docResponse, null, 2));
-                })
-                .catch(error => {
-                    console.error('Failed to send GIF:', error.toString());
-                    throw error;
-                });
-
-            await delay(500);  // Delay to help with rate limiting
-
             // Send the message with the PLAY button
             await bot.sendMessage(chatId, "Play the game to earn points! 🔥", {
                 reply_markup: {
@@ -79,7 +66,7 @@ bot.on('message', async (msg) => {
                 })
                 .then(async (messageId) => {
                     // Pin the text message if possible
-                    await delay(500);  // Delay to help with rate limiting
+                    await delay(500);  // Additional delay to help with rate limiting
                     await bot.pinChatMessage(chatId, messageId, { disable_notification: true })
                         .then(pinResponse => {
                             console.log('Pinned message:', JSON.stringify(pinResponse, null, 2));
