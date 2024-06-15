@@ -1,0 +1,16 @@
+{
+  "name": "bot-server",
+  "version": "1.0.0",
+  "description": "This project is a Telegram bot deployed on Vercel.",
+  "main": "api/bot.js",
+  "scripts": {
+    "start": "node api/bot.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "node-telegram-bot-api": "^0.66.0"
+  }
+}
