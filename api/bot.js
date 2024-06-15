@@ -6,44 +6,29 @@ const token = process.env.TELEGRAM_BOT_TOKEN;
 const gifUrl = process.env.GIF_URL;
 const websiteUrl = process.env.WEBSITE_URL;
 
-const bot = new TelegramBot(token);
+const bot = new TelegramBot(token, { polling: true });
 
-module.exports = async (req, res) => {
-    const body = req.body;
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
 
-    if (!body) {
-        return res.status(400).send('Bad Request');
-    }
+    // Respond to the /start command
+    if (msg.text === '/start') {
+        // First, send the GIF
+        await bot.sendDocument(chatId, gifUrl);
 
-    try {
-        // Iterate over each update
-        if (body.message) {
-            const msg = body.message;
-            const chatId = msg.chat.id;
-
-            // Respond to the /start command
-            if (msg.text === '/start') {
-                // Send the GIF
-                await bot.sendDocument(chatId, gifUrl);
-
-                // Then, send the message with the PLAY button
-                const message = await bot.sendMessage(chatId, "Play the game to earn points! 🔥", {
-                    reply_markup: {
-                        inline_keyboard: [[{
-                            text: "PLAY 🎮",
-                            web_app: { url: process.env.WEBSITE_URL }
-                        }]]
-                    }
-                });
-
-                // Pin the text message
-                await bot.pinChatMessage(chatId, message.message_id, { disable_notification: true });
+        // Then, send the message with the PLAY button
+        const message = await bot.sendMessage(chatId, "Play the game to earn points! 🔥", {
+            reply_markup: {
+                inline_keyboard: [[{
+                    text: "PLAY 🎮",
+                    web_app: { url: websiteUrl }
+                }]]
             }
-        }
+        });
 
-        res.status(200).send('OK');
-    } catch (error) {
-        console.error('Error handling message:', error);
-        res.status(500).send('Internal Server Error');
+        // Pin the text message
+        bot.pinChatMessage(chatId, message.message_id, { disable_notification: true });
     }
-};
+});
+
+console.log('Bot server started in the polling mode...');
