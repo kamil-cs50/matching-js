@@ -23,7 +23,7 @@ app.post('/', (req, res) => {
     res.sendStatus(200);
 });
 
-// Listen for messages from users 
+// Listen for messages from users
 bot.on('message', async (msg) => {
     const chatId = msg.chat.id;
 
