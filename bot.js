@@ -10,9 +10,6 @@ const token = process.env.TELEGRAM_BOT_TOKEN;
 const gifUrl = process.env.GIF_URL;
 const websiteUrl = process.env.WEBSITE_URL;
 
-// Set the port for the Express app
-const PORT = process.env.PORT || 3000;
-
 // Function to delay for a specified amount of time in ms
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -36,9 +33,7 @@ app.post(`/bot${token}`, async (req, res) => {
             const text = req.body.message.text;
 
             if (text === '/start') {
-                // Send the GIF with a delay
-                await bot.sendDocument(chatId, gifUrl);
-                await delay(80);
+
 
                 // Send the message with the PLAY button
                 const message = await bot.sendMessage(chatId, "Play the game to earn points! 🔥", {
